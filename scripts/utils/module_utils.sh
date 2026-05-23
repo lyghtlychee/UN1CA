@@ -170,11 +170,19 @@ HEX_PATCH()
         return 1
     fi
 
+    FROM="${FROM// /}"
+    TO="${TO// /}"
+
     FROM="$(tr "[:upper:]" "[:lower:]" <<< "$FROM")"
     TO="$(tr "[:upper:]" "[:lower:]" <<< "$TO")"
 
     if ! xxd -p -c 0 "$FILE" | grep -q "$FROM"; then
         LOGE "No \"$FROM\" match in ${FILE//$WORK_DIR/}"
+        return 1
+    fi
+
+    if [[ "$(echo -n "$FROM" | wc -c)" != "$(echo -n "$TO" | wc -c)" ]]; then
+        LOGE "Byte strings length must be equal"
         return 1
     fi
 
