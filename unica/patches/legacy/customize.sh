@@ -241,9 +241,9 @@ if [ "$TARGET_PLATFORM_SDK_VERSION" -lt "35" ]; then
         PATCHED=true
         # [b.eq #0xXXXXXX] -> [nop]
         # - android::net::MobileBBController::hotspotOn(const std::string)
-        HEX_PATCH "$WORK_DIR/system/system/bin/netd" "e0010054" "1f2003d5"
+        HEX_PATCH "$WORK_DIR/system/system/bin/netd" "1f01096be0010054" "1f01096b1f2003d5"
         # - android::net::MobileBBController::isMBBPathsPresent()
-        HEX_PATCH "$WORK_DIR/system/system/bin/netd" "20010054" "1f2003d5"
+        HEX_PATCH "$WORK_DIR/system/system/bin/netd" "1f01096b20010054" "1f01096b1f2003d5"
     fi
 fi
 
@@ -334,8 +334,19 @@ fi
 if [ -f "$WORK_DIR/system/system/priv-app/LedCoverService/LedCoverService.apk" ]; then
     if [ "$(GET_FLOATING_FEATURE_CONFIG "SEC_FLOATING_FEATURE_FRAMEWORK_CONFIG_NFC_LED_COVER_LEVEL")" -ge "30" ] && \
             [ "$(GET_FLOATING_FEATURE_CONFIG "SEC_FLOATING_FEATURE_FRAMEWORK_CONFIG_NFC_LED_COVER_LEVEL")" -lt "100" ]; then
+        PATCHED=true
         APPLY_PATCH "system" "system/priv-app/LedCoverService/LedCoverService.apk" \
             "$MODPATH/ledcover/LedCoverService.apk/0001-Switch-to-ISamsungNfcAdapter-interface.patch"
+    fi
+fi
+
+# Upgrade Single Take models (pre-API 35)
+if [ "$TARGET_PLATFORM_SDK_VERSION" -lt "35" ]; then
+    if [ ! -d "$WORK_DIR/vendor/etc/singletake/ClarityScorer" ]; then
+        PATCHED=true
+        DELETE_FROM_WORK_DIR "vendor" "etc/singletake"
+        ADD_TO_WORK_DIR "$SOURCE_FIRMWARE" "vendor" \
+            "etc/singletake/ClarityScorer/ClarityScorer.tflite" 0 0 644 "u:object_r:vendor_configs_file:s0"
     fi
 fi
 
