@@ -48,7 +48,7 @@ else
     source "$SRC_DIR/target/$1/config.sh" || exit 1
     if [ -f "$SRC_DIR/platform/$TARGET_PLATFORM/config.sh" ]; then
         # HACK
-        source "$SRC_DIR/platform/$TARGET_PLATFORM/config.sh" || exit
+        source "$SRC_DIR/platform/$TARGET_PLATFORM/config.sh" || exit 1
         source "$SRC_DIR/target/$1/config.sh" || exit 1
     fi
 fi
@@ -126,11 +126,6 @@ fi
 #
 #   TARGET_DISABLE_AVB_SIGNING
 #     If set to true, AVB signing will be disabled.
-#     Defaults to false.
-#
-#   TARGET_INCLUDE_PATCHED_VBMETA (DEPRECATED)
-#     If set to true, a patched vbmeta image will be included in the compiled Odin tar package.
-#     Only applies when TARGET_INSTALL_METHOD is set to "odin".
 #     Defaults to false.
 #
 #   TARGET_KEEP_ORIGINAL_SIGN
